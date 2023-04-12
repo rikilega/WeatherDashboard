@@ -2,12 +2,12 @@ const apiKey = '313359100b5007a4fe2a704d5c954fac';
 const baseURL = 'https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid='+ apiKey;
 const currURL = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=' + apiKey;
 const weatherDataElem = document.getElementById('weatherData');
-//load dom first
-document.addEventListener("DOMContentLoaded", function {   
-    const date = dayjs().format("dddd, MMMM D, YYYY")
+//load dom fully then function(), buttons will update when page reloads
+document.addEventListener("DOMContentLoaded", function() {   
+    const currentdate = dayjs().format("dddd, MMMM D, YYYY")
     const savedCityDate = JSON.parse(localStorage.getItem('savedCityDate') || "[]")
-    const newSavedCityDate = savedCityDate.filter(entry => entry.date === date);
-    localStorage.setItem('newsavedCityDate', JSON.stringify(newsavedCityDate));
+    const newSavedCityDate = savedCityDate.filter(entry => entry.date === currentdate);
+    localStorage.setItem('newSavedCityDate', JSON.stringify(newSavedCityDate));
     const savedTopCities = JSON.parse(localStorage.getItem('savedTopCities') || "[]")
     const topCities = document.getElementById("topCities");
     const searchBtns = topCities.querySelectorAll("button");
@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function {
         topCitybtns.appendChild(button);
     }
 
+    //load data in local storage from click else getWeatherData()
     searchBtns.forEach(btn => {
         btn.addEventListener('click', event => {
             console.log('click registered')
@@ -28,9 +29,8 @@ document.addEventListener("DOMContentLoaded", function {
         const city = btn.textContent
         console.log(city);
         const newSavedCityDate = JSON.parse(localStorage.getItem('newSavedCityDate') || "[]")
-        const loadWeatherIndex = newSavedCityDate.findIndex(entry => entry.city === city);
+        const loadWeatherIndex = newSavedCityDate.findIndex(entry => entry.city === city && entry.date === currentdate);
         console.log(loadWeatherIndex)
-        // localStorage.setItem('savedCityDate', JSON.stringify(savedCityDate));
         const savedEntry = newSavedCityDate[loadWeatherIndex];
         console.log(savedEntry)
         if (!savedEntry.weatherData) {
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function {
 }) 
 
 
-
+//function to check and load saved weather data if any from the current date, else will call getWeatherData() to load new data.
 function saveSearch() {
     const date = dayjs().format("dddd, MMMM D, YYYY");
     const city = cityInput.value
@@ -78,11 +78,6 @@ function saveSearch() {
         saveTopCities();
     }
 };
-    //check for saved city and date in local storage
-    //if saved city and date found then load savedWeatherHTML with function
-    //else if not found then 
-    //save city and date in array in local storage
-    //continue with getWeatherData(city)
 
 
 function getWeatherData(city) {
