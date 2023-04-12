@@ -2,32 +2,73 @@ const apiKey = '313359100b5007a4fe2a704d5c954fac';
 const baseURL = 'https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid='+ apiKey;
 const currURL = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=' + apiKey;
 const weatherDataElem = document.getElementById('weatherData');
+//load dom first
+document.addEventListener("DOMContentLoaded", function {   
+    const date = dayjs().format("dddd, MMMM D, YYYY")
+    const savedCityDate = JSON.parse(localStorage.getItem('savedCityDate') || "[]")
+    const newSavedCityDate = savedCityDate.filter(entry => entry.date === date);
+    localStorage.setItem('newsavedCityDate', JSON.stringify(newsavedCityDate));
+    const savedTopCities = JSON.parse(localStorage.getItem('savedTopCities') || "[]")
+    const topCities = document.getElementById("topCities");
+    const searchBtns = topCities.querySelectorAll("button");
+    const topCitybtns = document.getElementById("topCities");
+    
+    //iterate through savedTopCities array in local storage, create buttons with textcontent from strings in array.
+    for (let i = 0; i < savedTopCities.length; i++) {
+        const city = savedTopCities[i];
+        const button = document.createElement("button");
+        button.textContent = `${city}`;
+        topCitybtns.appendChild(button);
+    }
 
-//add event listener to initiate function for getting weather data
-const form = document.querySelector('form')
-const cityInput = document.getElementById('cityInput');
-form.addEventListener('submit', event => {
+    searchBtns.forEach(btn => {
+        btn.addEventListener('click', event => {
+            console.log('click registered')
+        event.preventDefault();
+        const city = btn.textContent
+        console.log(city);
+        const newSavedCityDate = JSON.parse(localStorage.getItem('newSavedCityDate') || "[]")
+        const loadWeatherIndex = newSavedCityDate.findIndex(entry => entry.city === city);
+        console.log(loadWeatherIndex)
+        // localStorage.setItem('savedCityDate', JSON.stringify(savedCityDate));
+        const savedEntry = newSavedCityDate[loadWeatherIndex];
+        console.log(savedEntry)
+        if (!savedEntry.weatherData) {
+            getWeatherData(city)
+            console.log("loaded get Weather")
+        } else {
+        weatherDataElem.innerHTML = savedEntry.weatherData
+        console.log(savedEntry.weatherData)
+        savedCityDate.push({city, date, weatherData: savedEntry.weatherData});
+        localStorage.setItem('savedCityDate', JSON.stringify(savedCityDate));
+        saveTopCities();
+    }
+    
+    });
+            
+    });
+    });
+
+    //add event listener to initiate function for getting weather data
+    const form = document.querySelector('form')
+    const cityInput = document.getElementById('cityInput');
+    form.addEventListener('submit', event => {
     event.preventDefault();
     const city = cityInput.value;           
     saveSearch(city);
     console.log("search clicked")
 }) 
 
+
+
 function saveSearch() {
     const date = dayjs().format("dddd, MMMM D, YYYY");
     const city = cityInput.value
-    
     const savedCityDate = JSON.parse(localStorage.getItem('savedCityDate') || "[]")
-
-    
     const duplicateEntryIndex = savedCityDate.findIndex(entry => entry.city === city && entry.date === date);
-    const badWeatherData = (Object.keys(savedCityDate[duplicateEntryIndex].weatherData)).length === 0;
-    savedCityDate.push({city, date})
-    localStorage.setItem('savedCityDate', JSON.stringify(savedCityDate));
     console.log(savedCityDate)
     if (duplicateEntryIndex < 0) {
             getWeatherData(city) 
-  
     } else if (duplicateEntryIndex >= 0) {
         const savedEntry = savedCityDate[duplicateEntryIndex];
         weatherDataElem.innerHTML = savedEntry.weatherData
@@ -115,7 +156,7 @@ function renderWeatherData(cardInfo, currentWeather) {
     // Generate HTML for each filtered day
     const forecastHTML = cardInfo.map(item => `
         <div class="forecast-item">
-            <div>${new Date(item.date).toLocaleString()}</div>
+            <div>${new Date(item.date).toLocaleString(undefined, { dateStyle: 'short' })}</div>
             <div>${item.temperature} &deg;F</div>
             <div>${item.description}</div>
             <img src="http://openweathermap.org/img/wn/${item.icon}.png">
