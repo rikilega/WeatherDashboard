@@ -16,23 +16,13 @@
   <body>
     <header>
       <h1>Weather Search</h1>
-      <form
-        class="col-md-3"
-        style="align-items: center; justify-content: center"
-      >
-        <input type="text" id="cityInput" placeholder="Enter the city name" />
+      <form class="col-md-3" style="align-items: center; justify-content: center;">
+        <input type="text" id="cityInput" placeholder="Enter the city name">
         <button type="submit">Search</button>
       </form>
     </header>
-    <div
-      class="row mx-3"
-      style="display: flex; justify-content: space-around; flex-wrap: wrap"
-    >
-      <div
-        class="col-md-4"
-        id="topCities"
-        style="display: flex; flex-direction: column"
-      ></div>
+    <div class="row mx-3" style="display: flex; justify-content: space-around; flex-wrap: wrap">
+      <div class="col-md-4" id="topCities" style="display: flex; flex-direction: column"></div>
       <div class="col-md-8 container" id="weatherData"></div>
     </div>
     <script
