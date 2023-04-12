@@ -10,6 +10,7 @@ form.addEventListener('submit', event => {
     event.preventDefault();
     const city = cityInput.value;           
     saveSearch(city);
+    console.log("search clicked")
 }) 
 
 function saveSearch(city) {
@@ -36,8 +37,20 @@ function saveSearch(city) {
         console.log(cardInfo);
         const currentWeather = parseCurrentWeatherData(data[1]);
         console.log(currentWeather)
-
+        //call function to render cardInfo and current weather to HTML
+        const weatherData = renderWeatherData(cardInfo, currentWeather);
+        weatherDataElem.innerHTML = weatherData
+        
+        //save search data to storage for search buttons and loading duplicate searches from local storage
+        const saveddate = dayjs().format("dddd, MMMM D, YYYY")
+        const savedCityDate = JSON.parse(localStorage.getItem('savedCityDate') || "[]")
+        savedCityDate.push({city, date: saveddate, weatherData});
+        console.log(savedCityDate)
+        localStorage.setItem('savedCityDate', JSON.stringify(savedCityDate));
     })
+
+    //call function to save top searches to local storage
+    saveTopCities()
 }
 
 //parse 5day forecast data for display data for each day
@@ -100,4 +113,21 @@ function renderWeatherData(cardInfo, currentWeather) {
         <div class="forecast">${forecastHTML}</div>
     `;
 
+}
+
+//function to rank cities by search volume and save array to local storage as savedTopCities
+function saveTopCities() {
+    localStorage.removeItem('savedTopCities');
+    const savedCityDate = JSON.parse(localStorage.getItem('savedCityDate') || "[]")
+    const cityCounts = savedCityDate.reduce((counts, entry) => {
+    counts[entry.city] = (counts[entry.city] || 0) + 1;
+    return counts;
+}, {});
+console.log(cityCounts)
+const topCities = Object.keys(cityCounts)
+    .sort((a, b) => cityCounts[b] - cityCounts[a])
+    .slice(0, 4);
+
+console.log(topCities)
+localStorage.setItem('savedTopCities', JSON.stringify(topCities));
 }
