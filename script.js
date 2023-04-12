@@ -13,7 +13,38 @@ form.addEventListener('submit', event => {
     console.log("search clicked")
 }) 
 
-function saveSearch(city) {
+function saveSearch() {
+    const date = dayjs().format("dddd, MMMM D, YYYY");
+    const city = cityInput.value
+    
+    const savedCityDate = JSON.parse(localStorage.getItem('savedCityDate') || "[]")
+
+    
+    const duplicateEntryIndex = savedCityDate.findIndex(entry => entry.city === city && entry.date === date);
+    const badWeatherData = (Object.keys(savedCityDate[duplicateEntryIndex].weatherData)).length === 0;
+    savedCityDate.push({city, date})
+    localStorage.setItem('savedCityDate', JSON.stringify(savedCityDate));
+    console.log(savedCityDate)
+    if (duplicateEntryIndex < 0) {
+            getWeatherData(city) 
+  
+    } else if (duplicateEntryIndex >= 0) {
+        const savedEntry = savedCityDate[duplicateEntryIndex];
+        weatherDataElem.innerHTML = savedEntry.weatherData
+        savedCityDate.push({city, date, weatherData: savedEntry.weatherData});
+        console.log("duplicateentry")
+        localStorage.setItem('savedCityDate', JSON.stringify(savedCityDate));
+        saveTopCities();
+    }
+};
+    //check for saved city and date in local storage
+    //if saved city and date found then load savedWeatherHTML with function
+    //else if not found then 
+    //save city and date in array in local storage
+    //continue with getWeatherData(city)
+
+
+function getWeatherData(city) {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${city}`;
     fetch(url)
     .then(response => response.json())
