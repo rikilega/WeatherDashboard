@@ -2,6 +2,10 @@ const apiKey = '313359100b5007a4fe2a704d5c954fac';
 const baseURL = 'https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid='+ apiKey;
 const currURL = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=' + apiKey;
 const weatherDataElem = document.getElementById('weatherData');
+const form = document.querySelector('form')
+const cityInput = document.getElementById('cityInput');
+
+
 //load dom fully then function(), buttons will update when page reloads
 document.addEventListener("DOMContentLoaded", function() {   
     const currentdate = dayjs().format("dddd, MMMM D, YYYY")
@@ -44,20 +48,17 @@ document.addEventListener("DOMContentLoaded", function() {
         saveTopCities();
     }
     
-    });
-            
+    });       
     });
     });
 
     //add event listener to initiate function for getting weather data
-    const form = document.querySelector('form')
-    const cityInput = document.getElementById('cityInput');
-    form.addEventListener('submit', event => {
+form.addEventListener('submit', event => {
     event.preventDefault();
     const city = cityInput.value;           
     saveSearch(city);
     console.log("search clicked")
-}) 
+    }) 
 
 
 //function to check and load saved weather data if any from the current date, else will call getWeatherData() to load new data.
@@ -147,7 +148,6 @@ function parseCurrentWeatherData(data) {
 
 //function to render data from cardInfo and currentWeather to HTML
 function renderWeatherData(cardInfo, currentWeather) {
-
     // Generate HTML for each filtered day
     const forecastHTML = cardInfo.map(item => `
         <div class="forecast-item">
@@ -179,7 +179,6 @@ function renderWeatherData(cardInfo, currentWeather) {
         <h2 >5-Day Forecast for ${currentWeather.city}</h2>
         <div class="forecast">${forecastHTML}</div>
     `;
-
 }
 
 //function to rank cities by search volume and save array to local storage as savedTopCities
@@ -191,10 +190,10 @@ function saveTopCities() {
     return counts;
 }, {});
 console.log(cityCounts)
+
 const topCities = Object.keys(cityCounts)
     .sort((a, b) => cityCounts[b] - cityCounts[a])
     .slice(0, 4);
-
 console.log(topCities)
 localStorage.setItem('savedTopCities', JSON.stringify(topCities));
 }
