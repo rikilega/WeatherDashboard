@@ -155,28 +155,33 @@ function renderWeatherData(cardInfo, currentWeather) {
 
     // Generate HTML for each filtered day
     const forecastHTML = cardInfo.map(item => `
-        <div class="forecast-item">
-            <div>${new Date(item.date).toLocaleString('en-US', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit' })}</div>
-            <div>${item.temperature} &deg;F</div>
-            <div>${item.description}</div>
-            <img src="http://openweathermap.org/img/wn/${item.icon}.png">
-            <div>Humidity: ${item.humidity}</div>
-            <div>Wind: ${item.wind}</div>
-        </div>
-    `).join('');
+    <div class="forecast-item">
+    <div>${new Date(item.date).toLocaleString('en-US', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit' })}</div>
+    <div>${item.temperature}&deg;F</div>
+    <div>${item.description}</div>
+    <img src="http://openweathermap.org/img/wn/${item.icon}.png">
+    <div>Humidity: ${item.humidity}</div>
+    <div>Wind: ${item.wind}</div>
+</div>
+`).join('');
 
-    const currentdate = dayjs().format("dddd, MMMM D, YYYY")
-    const currentWeatherHTML = `
-        <div class="current-weather">
+const currentdate = dayjs().format("dddd, MMMM D, YYYY")
+const currentWeatherHTML = `
+    <div class="current-weather row" style="display: flex;">
+        <div class="col-md-5">
             <h2>${currentWeather.city}</h2>
-            <div id="currentdate">${currentdate}</div>
-            <div>${currentWeather.temperature} &deg;F</div>
+            <div id="currentdate">${currentdate}</div> 
             <div>${currentWeather.description}</div>
             <img src="http://openweathermap.org/img/wn/${currentWeather.icon}.png">
             <div>Humidity: ${currentWeather.humidity}</div>
             <div>Wind: ${currentWeather.wind}</div>
         </div>
-    `;
+        <div class="col-md-6 currentWeatherTemp">
+            <div>${currentWeather.temperature}&deg;F</div>
+        </div> 
+        
+    </div>
+`;
 
     return `
         ${currentWeatherHTML}
