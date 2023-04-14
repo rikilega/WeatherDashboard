@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("loaded get Weather")
         } else {
         weatherDataElem.innerHTML = savedEntry.weatherData
+        seeWeather()
         console.log(savedEntry.weatherData)
         savedCityDate.push({city, date, weatherData: savedEntry.weatherData});
         localStorage.setItem('savedCityDate', JSON.stringify(savedCityDate));
@@ -84,6 +85,10 @@ function saveSearch() {
     }
 };
 
+function seeWeather() {
+    const forecastContainer = document.getElementById('forecast-container');
+    forecastContainer.scrollIntoView({ behavior: 'smooth' })
+}
 
 function getWeatherData(city) {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${city}`;
@@ -112,6 +117,7 @@ function getWeatherData(city) {
         //call function to render cardInfo and current weather to HTML
         const weatherData = renderWeatherData(cardInfo, currentWeather);
         weatherDataElem.innerHTML = weatherData
+      seeWeather()
         
         //save search data to storage for search buttons and loading duplicate searches from local storage
         const saveddate = dayjs().format("dddd, MMMM D, YYYY")
@@ -185,7 +191,7 @@ const currentWeatherHTML = `
 
     return `
         ${currentWeatherHTML}
-        <div class="forecast-container">
+        <div class="forecast-container" id="forecast-container">
         <h2 >5-Day Forecast for ${currentWeather.city}</h2>
         <div class="forecast">${forecastHTML}</div>
     `;
