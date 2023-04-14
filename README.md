@@ -18,6 +18,8 @@ When the user enters a city into the search bar, and the app will return the wea
 
 Searches are saved in local storage and after the user has submitted at least 2 searches the top searches will be stored in a separate array in local storage and buttons will appear on screen, the next time the user reloads the page, which will allow the user to quickly load these top searches from local storage.
 
+Every time the page is reloaded the top searches are updated and if needed the buttons will be modified accordingly.
+
 
 
 ## Usage:
